@@ -1,9 +1,9 @@
 #ou can use OpenCV to record video from your USB camera. Here is a simple Python script that uses OpenCV to capture video from a USB camera and save it to a file
 
 import cv2
-
+print(cv2.getBuildInformation())
 # Create a VideoCapture object
-cap = cv2.VideoCapture(0)
+cap = cv2.VideoCapture(2)
 
 # Define the codec and create a VideoWriter object
 fourcc = cv2.VideoWriter_fourcc(*'XVID')
