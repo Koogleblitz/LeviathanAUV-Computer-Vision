@@ -29,33 +29,13 @@ dateTime= datetime.now().strftime("%Y%m%d_%H%M%S")
 #[+] at frameDiv=2 and frmLim=200, it records at 16-20 fps for ~10 seconds. 
     # Oddly, the png frames yield a smaller file size than the jpg frames. I see no reason to use the jpg frames. 
     # A 10s vid would be ~500kb for jpg and ~400kb for png. 
-frmLim= 200
+frmLim= 4500
 frmDiv= 2
 frmSize= (480,640)
 fps= 18
 imgType= ".png"
 
 
-
-def compile_vid(image_folder, video_name, fps=18, imgType= ".png"):
-    print('dateTime: ', dateTime)
-    print('    --> image_folder: ', image_folder)
-    print('    --> compiled fps: ', fps)
-    print('    --> compiled imgType: ', imgType, '\n')
-
-    images = [img for img in os.listdir(image_folder) if img.endswith(imgType)]
-    frame = cv2.imread(os.path.join(image_folder, images[0]))
-    height, width, layers = frame.shape
-
-    video = cv2.VideoWriter(video_name, cv2.VideoWriter_fourcc(*'mp4v'), fps, (width,height))
-
-    frameCnt= len(images)
-    for i, image in enumerate(images):
-        video.write(cv2.imread(os.path.join(image_folder, image)))
-        if (i%10)==0 or i==frameCnt: print("Compiled: --> ", i, " / ", frameCnt)
-
-    # cv2.destroyAllWindows()
-    video.release()
 
 def record_vid():
     print('    --> recording fps: ', fps)
@@ -70,21 +50,38 @@ def record_vid():
         if ret == True:
             # Write the frame into the file 'output.avi' (not working curently)
             # out.write(frame)
-
             #[+] Hotfix: save each frame individually
             if i%frmDiv==0: cv2.imwrite(f'frames/frame_{i//frmDiv}'+imgType, frame)
             i+=1 
 
             # Display the resulting frame
-            cv2.imshow('frame_{i}', frame)
-
-
-            if cv2.waitKey(1) & 0xFF == ord('q'):
-                break
+            cv2.putText(frame, '[::'+str(i)+']', org=(10, 20), fontFace=cv2.FONT_HERSHEY_DUPLEX, fontScale=.5, color= (100,100,255), thickness=2)
+            cv2.imshow('frame_', frame)
+            if cv2.waitKey(1) & 0xFF == ord('q'): break
         else:
             print("[x:] ERROR: No camera frames read. ")
             break
     cap.release()
+    cv2.destroyAllWindows()
+
+def compile_vid(image_folder, video_name, fps=18, imgType= ".png"):
+    print('dateTime: ', dateTime)
+    print('    --> image_folder: ', image_folder)
+    print('    --> compiled fps: ', fps)
+    print('    --> compiled imgType: ', imgType, '\n')
+
+    images = [img for img in os.listdir(image_folder) if img.endswith(imgType)]
+    frame = cv2.imread(os.path.join(image_folder, images[0]))
+    height, width, layers = frame.shape
+    video = cv2.VideoWriter(video_name, cv2.VideoWriter_fourcc(*'mp4v'), fps, (width,height))
+
+    frameCnt= len(images)
+    for i, image in enumerate(images):
+        video.write(cv2.imread(os.path.join(image_folder, image)))
+        if (i%10)==0 or i==frameCnt: print("Compiled: --> ", i, " / ", frameCnt)
+
+    # cv2.destroyAllWindows()
+    video.release()
 
 
 def del_frames():
