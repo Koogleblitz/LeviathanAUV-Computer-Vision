@@ -21,19 +21,26 @@ if not os.path.exists('recordings'):
 #recorder = cv2.VideoWriter_fourcc(*'mp4v')
 #out = cv2.VideoWriter('output3.mp4', recorder, 20.0, (640, 480))
 
-recording_path= r'C:\Users\richa\OneDrive\CSEC_Robosub\richardCode\Repo\recordings'
-vid_Path= r"C:\Users\richa\OneDrive - email.ucr.edu\CSEC_Robosub\richardCode\Repo\recordings\\"
-frame_Path=  r"C:\Users\richa\OneDrive - email.ucr.edu\CSEC_Robosub\richardCode\Repo\frames"
+#recording_path= r'C:\Users\richa\OneDrive\CSEC_Robosub\richardCode\Repo\recordings'
+#vid_Path= r"C:\Users\richa\OneDrive - email.ucr.edu\CSEC_Robosub\richardCode\Repo\recordings\\"
+#frame_Path=  r"C:\Users\richa\OneDrive - email.ucr.edu\CSEC_Robosub\richardCode\Repo\frames"
+
+recording_path= r'./recordings'
+vid_Path= r"./recordings/"
+frame_Path=  r"./frames"
+
 dateTime= datetime.now().strftime("%Y%m%d_%H%M%S")
 
 #[+] at frameDiv=2 and frmLim=200, it records at 16-20 fps for ~10 seconds. 
     # Oddly, the png frames yield a smaller file size than the jpg frames. I see no reason to use the jpg frames. 
     # A 10s vid would be ~500kb for jpg and ~400kb for png. 
-frmLim= 4500
+    # On the TX1, using the default black carrier board, with the cam plugged into the OTG socket, the camNum==2
+frmLim= 200
 frmDiv= 2
 frmSize= (480,640)
 fps= 18
 imgType= ".png"
+camNum= 2
 
 
 
@@ -44,7 +51,7 @@ def record_vid():
 
     i=0
     #while(cap.isOpened()):
-    cap = cv2.VideoCapture(2)
+    cap = cv2.VideoCapture(camNum)
     while(i<=frmLim*frmDiv):
         ret, frame = cap.read()
         if ret == True:
@@ -59,7 +66,7 @@ def record_vid():
             cv2.imshow('frame_', frame)
             if cv2.waitKey(1) & 0xFF == ord('q'): break
         else:
-            print("[x:] ERROR: No camera frames read. ")
+            print("    \n--> [x:] ERROR: No camera frames read. \n")
             break
     cap.release()
     cv2.destroyAllWindows()
